@@ -1,0 +1,33 @@
+{
+  "name": "gpt_wrapper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "dist:win": "electron-builder --win"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "electron": "^37.2.3",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.hurtcraft.gpt_wrapper",
+    "productName": "GPT_WRAPPER",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/pp.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "installerLanguages": [
+        "fr_FR"
+      ] 
+    }
+  }
+}

@@ -1,0 +1,7 @@
+lancer en admin powershell: Set-MpPreference -DisableRealtimeMonitoring $true
+lancer : npm run dist:win
+lancer : dist/GPT_WRAPPER Setup 1.0.0.exe
+suivre les étapes
+lancer en admin powershell: Set-MpPreference -DisableRealtimeMonitoring $false
+CTRL+SPACE pour le raccourcie
+
