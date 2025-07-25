@@ -5,4 +5,7 @@ suivre les étapes
 lancer en admin powershell: Set-MpPreference -DisableRealtimeMonitoring $false
 CTRL+SPACE pour le raccourci
 
+Pour lancer au demarrage : 
+win+r ==> shell:startup et créer la raccourci
+
 
