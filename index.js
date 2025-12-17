@@ -1,6 +1,6 @@
 const { app, BrowserWindow, globalShortcut, screen, Tray, Menu } = require('electron');
 const path = require('path');
-const { slideDownAndShow, slideUpAndHide, closeAnimation,closeAnimation2 } = require('./animation');
+const { slideDownAndShow, slideUpAndHide, closeAnimation, closeAnimation2 } = require('./animation');
 const { createTray } = require('./tray');
 
 const os = require('os');
@@ -11,21 +11,28 @@ let mainWindow;
 let startY;
 let endY;
 
-const DEFAULT_WIDTH = 1200;
-const DEFAULT_HEIGHT = 800;
+// old
+// const DEFAULT_WIDTH = 1200;
+// const DEFAULT_HEIGHT = 800;
+
+const width_ratio=0.6;
+const height_ratio=0.7;
+const rest_height_ratio= 1-height_ratio;
+let DEFAULT_WIDTH;
+let DEFAULT_HEIGHT;
 
 
 
 function createWindow() {
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;
-    endY = Math.round(height / 2 - 400);        // position finale (centrée verticalement)
-    startY = endY - DEFAULT_HEIGHT;                         // position de départ (100px au-dessus)
+    endY = Math.round((height - DEFAULT_HEIGHT) / 2);
+    startY = endY - DEFAULT_HEIGHT*1+rest_height_ratio;                         // position de départ (100px au-dessus)
 
     mainWindow = new BrowserWindow({
         width: DEFAULT_WIDTH,
         height: DEFAULT_HEIGHT,
-        x: Math.round(width / 2 - 600),
+        x: Math.round((primaryDisplay.workAreaSize.width - DEFAULT_WIDTH) / 2),
         y: startY,
         opacity: 1,
         show: false,
@@ -37,7 +44,7 @@ function createWindow() {
         }
 
     });
-    
+
     mainWindow.loadURL('https://chat.openai.com');
     mainWindow.on('close', (e) => {
         e.preventDefault();
@@ -49,13 +56,20 @@ function createWindow() {
         slideUpAndHide(mainWindow, startY);
 
     });
-   
+
     createTray();
 
     //createTray(mainWindow, quittingState)
 
 }
 app.whenReady().then(() => {
+    const { screen } = require('electron');
+
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
+    DEFAULT_WIDTH = Math.floor(width * width_ratio);
+    DEFAULT_HEIGHT = Math.floor(height * height_ratio);
+
     createWindow();
     slideDownAndShow(mainWindow, startY, endY);
     globalShortcut.register('Ctrl+Space', () => {

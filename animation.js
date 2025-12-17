@@ -1,114 +1,109 @@
-const { app } = require("electron");
+const FPS = 90;
+const FRAME = 100 / FPS;
 
-const step = 25;
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function animate(win, from, to, duration, apply, done) {
+  const start = Date.now();
+  const delta = to - from;
+
+  const timer = setInterval(() => {
+    const t = Math.min((Date.now() - start) / duration, 1);
+    apply(from + delta * easeOutCubic(t));
+
+    if (t === 1) {
+      clearInterval(timer);
+      done?.();
+    }
+  }, FRAME);
+}
+
 function slideDownAndShow(mainWindow, startY, endY) {
   if (mainWindow.isMaximized()) {
     mainWindow.unmaximize();
-    setTimeout(() => {
-      slideDownAndShow(mainWindow, startY, endY);
-    }, 100);
-    return;
+    return setTimeout(() => slideDownAndShow(mainWindow, startY, endY), 100);
   }
-  let y = startY;
-  mainWindow.setBounds({ x: mainWindow.getBounds().x, y });
+
+  const { x } = mainWindow.getBounds();
+  mainWindow.setBounds({ x, y: startY });
   mainWindow.show();
   mainWindow.focus();
 
-  const interval = setInterval(() => {
-    if (y >= endY) {
-      for (let i = 0; i < 100; i++) {
-        y += 2;
-        mainWindow.setBounds({ y: y });
-      }
-      for (let i = 0; i < 100; i++) {
-        y -= 2;
-       mainWindow.setBounds({ y: y });
-      }
-      clearInterval(interval);
-    } else {
-      y += step;
-      mainWindow.setBounds({ y: y });
-    }
-  }, 1);
+  animate(
+    mainWindow,
+    startY,
+    endY,
+    250,
+    y => mainWindow.setBounds({ y })
+  );
 }
-
 function slideUpAndHide(mainWindow, startY) {
-
   if (mainWindow.isMaximized()) {
     mainWindow.unmaximize();
-    setTimeout(() => {
-      slideUpAndHide(mainWindow, startY);
-    }, 100);
-    return;
+    return setTimeout(() => slideUpAndHide(mainWindow, startY), 100);
   }
 
-  let y = mainWindow.getBounds().y;
+  const { y } = mainWindow.getBounds();
 
-  const interval = setInterval(() => {
-    if (y <= startY) {
-      clearInterval(interval);
-      mainWindow.hide();
-    } else {
-      y -= step;
-      mainWindow.setBounds({ y: y });
-    }
-  }, 1);
+  animate(
+    mainWindow,
+    y,
+    startY,
+    200,
+    y => mainWindow.setBounds({ y }),
+    () => mainWindow.hide()
+  );
 }
 
 function closeAnimation(mainWindow) {
-  const initialBounds = mainWindow.getBounds();
-  let width = initialBounds.width;
-  let height = initialBounds.height;
-  let opacity = 1;
+  const b = mainWindow.getBounds();
+  const cx = b.x + b.width / 2;
+  const cy = b.y + b.height / 2;
 
-  const centerX = initialBounds.x + width / 2;
-  const centerY = initialBounds.y + height / 2;
+  const start = Date.now();
+  const duration = 250;
 
-  const interval = setInterval(() => {
-    width = width * 0.9;
-    height = height * 0.9;
-    opacity = Math.max(0, opacity - 0.05);
+  const timer = setInterval(() => {
+    const t = Math.min((Date.now() - start) / duration, 1);
+    const k = 1 - easeOutCubic(t);
 
-    const newX = centerX - width / 2;
-    const newY = centerY - height / 2;
+    const width = Math.max(1, b.width * k);
+    const height = Math.max(1, b.height * k);
 
     mainWindow.setBounds({
-      x: newX,
-      y: newY,
-      width: width,
-      height: height
+      x: cx - width / 2,
+      y: cy - height / 2,
+      width,
+      height
     });
 
-    mainWindow.setOpacity(opacity);
+    mainWindow.setOpacity(1 - t);
 
-    if (width <= 10 || height <= 10 || opacity <= 0) {
-      clearInterval(interval);
+    if (t === 1) {
+      clearInterval(timer);
       mainWindow.destroy();
     }
-  }, 2);
+  }, FRAME);
 }
 
 function closeAnimation2(mainWindow) {
   if (mainWindow.isMaximized()) {
     mainWindow.unmaximize();
-    setTimeout(() => {
-      closeAnimation2(mainWindow);
-    }, 100);
-    return;
+    return setTimeout(() => closeAnimation2(mainWindow), 100);
   }
-  let y = mainWindow.getBounds().y;
-  mainWindow.setBounds({ x: mainWindow.getBounds().x, y });
-  mainWindow.show();
-  mainWindow.focus();
 
-  const interval = setInterval(() => {
-    if (y >= 1500) {
-      mainWindow.destroy();
-      clearInterval(interval);
-    } else {
-      y += step;
-      mainWindow.setBounds({ y:y });
-    }
-  }, 1);
+  const { y } = mainWindow.getBounds();
+  const targetY = y + 1000;
+
+  animate(
+    mainWindow,
+    y,
+    targetY,
+    300,
+    y => mainWindow.setBounds({ y }),
+    () => mainWindow.destroy()
+  );
 }
 module.exports = { slideDownAndShow, slideUpAndHide, closeAnimation,closeAnimation2 };
