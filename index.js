@@ -19,14 +19,14 @@ let endY;
 // const DEFAULT_HEIGHT = 800;
 
 const width_ratio=0.7;
-const height_ratio=0.75;
+const height_ratio=0.8;
 const rest_height_ratio= 1-height_ratio;
 let DEFAULT_WIDTH;
 let DEFAULT_HEIGHT;
 
 let chat_gpt_url="https://chat.openai.com/";
 let claud_url="https://claude.com/";
-let deepseek_url="https://www.deepseek.com/";
+let deepseek_url="https://chat.deepseek.com/";
 
 let default_url=config.model;
 
