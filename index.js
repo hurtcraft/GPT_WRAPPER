@@ -6,9 +6,6 @@ const fs = require("fs");
 
 const os = require('os');
 
-app.setPath('userData', path.join(os.homedir(), 'GPT_WRAPPER_user_data'));
-const configPath = path.join(__dirname, "config.json");
-const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
 let mainWindow;
 let startY;
@@ -27,6 +24,26 @@ let DEFAULT_HEIGHT;
 let chat_gpt_url="https://chat.openai.com/";
 let claud_url="https://claude.com/";
 let deepseek_url="https://chat.deepseek.com/";
+
+app.setPath('userData', path.join(os.homedir(), 'GPT_WRAPPER_user_data'));
+//const configPath = path.join(__dirname, "config.json");
+
+const configPath = path.join(app.getPath("userData"), "config.json");
+
+function loadConfig() {
+    if (!fs.existsSync(configPath)) {
+        const defaultConfig = {
+            model: chat_gpt_url
+        };
+
+        fs.writeFileSync(configPath, JSON.stringify(defaultConfig, null, 4));
+        return defaultConfig;
+    }
+
+    return JSON.parse(fs.readFileSync(configPath, "utf8"));
+}
+loadConfig()
+const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
 let default_url=config.model;
 
