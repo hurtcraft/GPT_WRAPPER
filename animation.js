@@ -35,7 +35,7 @@ function slideDownAndShow(mainWindow, startY, endY) {
     mainWindow,
     startY,
     endY,
-    250,
+    100,
     y => mainWindow.setBounds({ y })
   );
 }
@@ -51,7 +51,7 @@ function slideUpAndHide(mainWindow, startY) {
     mainWindow,
     y,
     startY,
-    200,
+    50,
     y => mainWindow.setBounds({ y }),
     () => mainWindow.hide()
   );
@@ -63,7 +63,7 @@ function closeAnimation(mainWindow) {
   const cy = b.y + b.height / 2;
 
   const start = Date.now();
-  const duration = 250;
+  const duration = 150;
 
   const timer = setInterval(() => {
     const t = Math.min((Date.now() - start) / duration, 1);
@@ -101,7 +101,7 @@ function closeAnimation2(mainWindow) {
     mainWindow,
     y,
     targetY,
-    300,
+    200,
     y => mainWindow.setBounds({ y }),
     () => mainWindow.destroy()
   );
