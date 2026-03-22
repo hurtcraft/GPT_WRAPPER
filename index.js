@@ -16,7 +16,7 @@ let endY;
 // const DEFAULT_HEIGHT = 800;
 
 const width_ratio=0.6;
-const height_ratio=0.7;
+const height_ratio=0.65;
 const rest_height_ratio= 1-height_ratio;
 let DEFAULT_WIDTH;
 let DEFAULT_HEIGHT;
@@ -26,8 +26,8 @@ let DEFAULT_HEIGHT;
 function createWindow() {
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;
-    endY = Math.round((height - DEFAULT_HEIGHT) / 2);
-    startY = endY - DEFAULT_HEIGHT*1+rest_height_ratio;                         // position de départ (100px au-dessus)
+    endY = Math.round((height - DEFAULT_HEIGHT) / 4);
+    startY =endY - DEFAULT_HEIGHT*1+rest_height_ratio;                         // position de départ (100px au-dessus)
 
     mainWindow = new BrowserWindow({
         width: DEFAULT_WIDTH,
@@ -46,6 +46,7 @@ function createWindow() {
     });
 
     mainWindow.loadURL('https://chat.openai.com');
+    //mainWindow.loadURL('https://gemini.google.com/app?hl=fr')
     mainWindow.on('close', (e) => {
         e.preventDefault();
         closeAnimation(mainWindow);
